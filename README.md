@@ -13,6 +13,12 @@ Simple clone the repository:
 $ git clone https://github.com/larsbs/phadocker.git
 ```
 
+Then, initialize the submodules
+
+```bash
+$ git submodule init && git submodule update
+```
+
 
 ## Configuration
 
