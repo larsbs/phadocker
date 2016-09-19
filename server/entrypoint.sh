@@ -54,7 +54,7 @@ setup_phabricator_and_start_apache() {
     fi
 
     # Start apache
-    service apache2 start && tail -f /var/log/apache2/access.log
+    httpd -k restart && tail -f /var/log/apache2/access.log
 }
 
 

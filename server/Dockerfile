@@ -1,27 +1,25 @@
 # Base image
-FROM debian:jessie
+FROM fedora:24
 
 LABEL phabricator=server
-
-ARG DEBIAN_FRONTEND=noninteractive
 
 
 # DEPENDENCIES
 # ============
 
 # Install `apt-get` packages
-RUN apt-get update && apt-get install -qq -y \
+RUN dnf update && dnf install -y \
   git \
-  apache2 \
-  php5 \
-  php5-mysql \
-  php5-apcu \
-  php5-curl \
-  php5-gd \
+  httpd \
+  php \
+  php-mysql \
+  php-apcu \
+  php-curl \
+  php-gd \
   python-pygments \
-  mysql-client \
+  mysql \
   sendmail \
-  && apt-get clean
+  && dnf clean all
 
 
 # PREPARE PHABRICATOR CODE
@@ -52,39 +50,40 @@ VOLUME /opt/extensions
 # SETUP APACHE
 # ============
 
-# Enable necessary mods
-RUN a2enmod rewrite
+# Create sites folders
+RUN mkdir -p /etc/httpd/sites-available
+RUN mkdir -p /etc/httpd/sites-enabled
 
-# Clean apache `sites-enabled` directory
-RUN a2dissite 000-default
+# Add sites folders to httpd.confd
+RUN echo "IncludeOptional sites-enabled/*.conf" >> /etc/httpd/conf/httpd.conf
 
 # Add phabricator site configuration
-COPY phabricator.conf /etc/apache2/sites-available/phabricator.conf
+COPY phabricator.conf /etc/httpd/sites-available/phabricator.conf
 
 # Enable phabricator site configuration
-RUN a2ensite phabricator
+RUN ln -s /etc/httpd/sites-available/phabricator.conf /etc/httpd/sites-enabled/phabricator.conf
 
-# Set ServerName
-RUN echo "ServerName phabricator" >> /etc/apache2/apache2.conf
+# Set default ServerName
+RUN echo "ServerName phabricator" >> /etc/httpd/conf/httpd.conf
 
 
 # SETUP PHP
 # =========
 
 # Increase PHP post max size
-RUN sed "s/post_max_size.*/post_max_size = 32M/" -i /etc/php5/apache2/php.ini
+RUN sed "s/post_max_size.*/post_max_size = 32M/" -i /etc/php.ini
 
 # Increase PHP `upload_max_filesize`
-RUN sed "s/\(upload_max_filesize\).*/\1 = 32M/" -i /etc/php5/apache2/php.ini
+RUN sed "s/\(upload_max_filesize\).*/\1 = 32M/" -i /etc/php.ini
 
 # Set PHP Timezone
-RUN sed "s|;\(date.timezone\).*|\1 = Europe/Madrid|" -i /etc/php5/apache2/php.ini
+RUN sed "s|;\(date.timezone\).*|\1 = Europe/Madrid|" -i /etc/php.ini
 
 # Configure OPcache for production
-RUN sed "s|;\(opcache.validate_timestamps\)=1|\1=0|" -i /etc/php5/apache2/php.ini
+RUN sed "s|;\(opcache.validate_timestamps\)=1|\1=0|" -i /etc/php.ini
 
 # Configure `always_populate_raw_post_data` to prevent deprecation warnings
-RUN sed "s|;\(always_populate_raw_post_data\).*|\1 = -1|" -i /etc/php5/apache2/php.ini
+RUN sed "s|;\(always_populate_raw_post_data\).*|\1 = -1|" -i /etc/php.ini
 
 
 # SETUP IMAGE
