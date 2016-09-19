@@ -8,7 +8,7 @@ LABEL phabricator=server
 # ============
 
 # Install `apt-get` packages
-RUN dnf update && dnf install -y \
+RUN dnf update -y && dnf install -y \
   git \
   httpd \
   php \
@@ -16,9 +16,13 @@ RUN dnf update && dnf install -y \
   php-apcu \
   php-curl \
   php-gd \
+  php-posix \
+  php-mbstring \
+  php-opcache \
   python-pygments \
   mysql \
   sendmail \
+  which \
   && dnf clean all
 
 
@@ -39,7 +43,7 @@ VOLUME /var/repo
 
 # Setup disk volume
 RUN mkdir -p /var/disk
-RUN chown -R www-data:www-data /var/disk
+RUN chown -R apache:apache /var/disk
 VOLUME /var/disk
 
 # Setup extensions volume
@@ -79,11 +83,13 @@ RUN sed "s/\(upload_max_filesize\).*/\1 = 32M/" -i /etc/php.ini
 # Set PHP Timezone
 RUN sed "s|;\(date.timezone\).*|\1 = Europe/Madrid|" -i /etc/php.ini
 
-# Configure OPcache for production
-RUN sed "s|;\(opcache.validate_timestamps\)=1|\1=0|" -i /etc/php.ini
-
 # Configure `always_populate_raw_post_data` to prevent deprecation warnings
 RUN sed "s|;\(always_populate_raw_post_data\).*|\1 = -1|" -i /etc/php.ini
+
+# Configure OPcache for production
+RUN echo "[opcache]" >> /etc/php.ini
+RUN echo "opcache.validate_timestamps=0" >> /etc/php.ini
+#RUN sed "s|;\(opcache.validate_timestamps\)=1|\1=0|" -i /etc/php.ini
 
 
 # SETUP IMAGE

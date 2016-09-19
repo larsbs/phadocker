@@ -23,7 +23,7 @@ setup_phabricator_and_start_apache() {
     echo
 
     # Set /var/disk as writable by the server
-    chown -R www-data:www-data /var/disk
+    chown -R apache:apache /var/disk
 
     # Setup phabricator database connection
     ./phabricator/bin/config set mysql.host ${DB_HOST}
@@ -54,7 +54,7 @@ setup_phabricator_and_start_apache() {
     fi
 
     # Start apache
-    httpd -k restart && tail -f /var/log/apache2/access.log
+    httpd -k restart && tail -f /var/log/httpd/access_log
 }
 
 
