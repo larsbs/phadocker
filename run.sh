@@ -44,6 +44,7 @@ run_phabricator_container() {
         -e "MAILGUN_API_KEY=${MAILGUN_API_KEY}" \
         -v "${PHABRICATOR_LOCAL_REPODIR}":"${PHABRICATOR_REPODIR}" \
         -v "${PHABRICATOR_LOCAL_LOCALDISK_PATH}":"${PHABRICATOR_LOCALDISK_PATH}" \
+        -v "${PHABRICATOR_LOCAL_EXTENSIONS_PATH}":"/opt/extensions" \
         "sindrosoft/${CONTAINER_PREFIX}_${CONTAINER_PHABRICATOR_NAME}"
 }
 

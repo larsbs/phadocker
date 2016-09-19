@@ -44,6 +44,10 @@ RUN mkdir -p /var/disk
 RUN chown -R www-data:www-data /var/disk
 VOLUME /var/disk
 
+# Setup extensions volume
+RUN mkdir -p /opt/extensions
+VOLUME /opt/extensions
+
 
 # SETUP APACHE
 # ============
