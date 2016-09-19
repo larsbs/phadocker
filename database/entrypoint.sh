@@ -8,7 +8,7 @@
 prepare_and_start_mysql() {
     # Initialize mysql
     echo "Initializing mysql server..."
-    mysql_install_db --user=mysql --datadir="${DB_DATADIR}" --keep-my-cnf > /dev/null 2>&1
+    mysql_install_db --user=mysql --datadir="${DB_DATADIR}" --keep-my-cnf
 
     # Start mysql server
     mysqld_safe > /dev/null 2>&1 &

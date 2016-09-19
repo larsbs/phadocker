@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -qq -y \
   php5-gd \
   python-pygments \
   mysql-client \
+  sendmail \
   && apt-get clean
 
 
