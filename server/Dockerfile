@@ -1,5 +1,5 @@
 # Base image
-FROM ubuntu:14.04
+FROM debian:jessie
 
 LABEL phabricator=server
 
@@ -20,7 +20,6 @@ RUN apt-get update && apt-get install -qq -y \
   php5-gd \
   python-pygments \
   mysql-client \
-  apt-utils \
   && apt-get clean
 
 

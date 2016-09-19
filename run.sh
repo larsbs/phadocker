@@ -51,8 +51,16 @@ run_phabricator_container() {
 
 build_db_image
 build_phabricator_image
-run_db_container
-run_phabricator_container
+if [ -z "$1" ]; then
+    run_db_container
+    run_phabricator_container
+fi
+if [ "$1" ] && [ "$1" = "db" ]; then
+    run_db_container
+fi
+if [ "$1" ] && [ "$1" = "server" ]; then
+    run_phabricator_container
+fi
 
 # Log output when running phabricator
 docker logs -f ${CONTAINER_PREFIX}_${CONTAINER_PHABRICATOR_NAME}
